@@ -1,10 +1,27 @@
 from bs4 import BeautifulSoup
 import requests
-url = "https://quotes.toscrape.com/"
+import ollama
+word = input("Type a word. ")
+url = "https://www.merriam-webster.com/dictionary/" + word
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
-item = soup.find('h1').get_text()
-print(item)
-items = soup.find_all('span', class_ = 'text')
-for item in items:
-    print(item.get_text())
+definitions_list = soup.find_all('div', class_='sb-entry')
+definitions = ""
+for definition in definitions_list:
+    definitions += definition.get_text().strip()
+# print(definitions)
+response = ollama.chat(model='gemma3:1b', messages=[
+    {
+        'role': 'system',
+        'content': (
+            "Let's play a game!"
+            "You will be given a list of definitions."
+            "You have to guess the word they define!"
+            "Have fun!"
+        )},
+  {
+    'role': 'user',
+    'content': definitions
+  }
+])
+print(response['message']['content'])
