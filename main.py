@@ -6,6 +6,7 @@ url = "https://www.merriam-webster.com/dictionary/" + word
 response = requests.get(url)
 soup = BeautifulSoup(response.text, "html.parser")
 definitions_list = soup.find_all('div', class_='sb-entry')
+# create a string variable to collect all the elements of definitions_list as you loop through
 definitions = ""
 for definition in definitions_list:
     definitions += definition.get_text().strip()
